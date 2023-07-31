@@ -250,7 +250,7 @@ func TestProofU(t *testing.T) {
 
 	b, err := NewCredentialBuilder(testPubK, context, secret, nonce2, nil)
 	assert.NoError(t, err)
-	contributions, err := b.Commit(map[string]*big.Int{"secretkey": secret})
+	contributions, err := b.Commit(map[int]*big.Int{0: secret})
 	require.NoError(t, err)
 	proofU := b.CreateProof(createChallenge(context, nonce1, contributions, false))
 
@@ -995,7 +995,7 @@ func TestRandomBlindCreateProofUandCommit(t *testing.T) {
 
 	b, err := NewCredentialBuilder(testPubK, context, secret, nonce2, []int{2})
 	assert.NoError(t, err)
-	contributions, err := b.Commit(map[string]*big.Int{"secretkey": secret})
+	contributions, err := b.Commit(map[int]*big.Int{0: secret})
 	require.NoError(t, err)
 	proofU := b.CreateProof(createChallenge(context, nonce1, contributions, false))
 	c, err := proofU.ChallengeContribution(testPubK)

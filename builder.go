@@ -196,7 +196,7 @@ func (b *CredentialBuilder) proveCommitment(nonce1 *big.Int) (Proof, error) {
 	if err != nil {
 		return nil, err
 	}
-	contrib, err := b.Commit(map[string]*big.Int{"secretkey": sCommit})
+	contrib, err := b.Commit(map[int]*big.Int{0: sCommit})
 	if err != nil {
 		return nil, err
 	}
@@ -239,8 +239,8 @@ func (b *CredentialBuilder) PublicKey() *gabikeys.PublicKey {
 
 // Commit commits to the secret (first attribute) using the provided randomizer.
 // Optionally commits to the user shares of random blind attributes if any are present.
-func (b *CredentialBuilder) Commit(randomizers map[string]*big.Int) ([]*big.Int, error) {
-	b.skRandomizer = randomizers["secretkey"]
+func (b *CredentialBuilder) Commit(randomizers map[int]*big.Int) ([]*big.Int, error) {
+	b.skRandomizer = randomizers[0]
 	var err error
 	b.vPrimeCommit, err = common.RandomBigInt(b.pk.Params.LvPrimeCommit)
 	if err != nil {

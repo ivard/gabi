@@ -112,12 +112,13 @@ func (ic *Credential) CreateDisclosureProof(
 	rangeStatements map[int][]*rangeproof.Statement,
 	nonrev bool,
 	context, nonce1 *big.Int,
+	equalRandomizers [][]ProofBuilderListIndex,
 ) (*ProofD, error) {
 	builder, err := ic.CreateDisclosureProofBuilder(disclosedAttributes, rangeStatements, nonrev)
 	if err != nil {
 		return nil, err
 	}
-	challenge, err := ProofBuilderList{builder}.Challenge(context, nonce1, false)
+	challenge, err := ProofBuilderList{builder}.Challenge(context, nonce1, false, equalRandomizers)
 	if err != nil {
 		return nil, err
 	}
@@ -286,8 +287,10 @@ func (d *DisclosureProofBuilder) PublicKey() *gabikeys.PublicKey {
 
 // Commit commits to the first attribute (the secret) using the provided
 // randomizer.
-func (d *DisclosureProofBuilder) Commit(randomizers map[string]*big.Int) ([]*big.Int, error) {
-	d.attrRandomizers[0] = randomizers["secretkey"]
+func (d *DisclosureProofBuilder) Commit(randomizers map[int]*big.Int) ([]*big.Int, error) {
+	for i, randomizer := range randomizers {
+		d.attrRandomizers[i] = randomizer
+	}
 
 	// Z = A^{e_commit} * S^{v_commit}
 	//     PROD_{i \in undisclosed} ( R_i^{a_commits{i}} )
